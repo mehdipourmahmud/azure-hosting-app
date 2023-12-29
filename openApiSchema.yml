@@ -1,11 +1,11 @@
 openapi: 3.0.0
 info:
   version: 1.0.0
-  title: Persons API
+  title: Book API
 paths:
-  /persons:
+  /books:
     get:
-      summary: Get all persons
+      summary: Get all books
       responses:
         '200':
           description: OK
@@ -14,23 +14,23 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Person'
+                  $ref: '#/components/schemas/Book'
     post:
-      summary: Create a new person
+      summary: Create a new book
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Person'
+              $ref: '#/components/schemas/Book'
       responses:
         '201':
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Person'
-  /persons/{id}:
+                $ref: '#/components/schemas/Book'
+  /books/{id}:
     parameters:
       - name: id
         in: path
@@ -38,49 +38,55 @@ paths:
         schema:
           type: integer
     get:
-      summary: Get a person by ID
+      summary: Get a book by ID
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Person'
+                $ref: '#/components/schemas/Book'
         '404':
-          description: Person not found
+          description: Book not found
     put:
-      summary: Update a person by ID
+      summary: Update a Book by ID
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Person'
+              $ref: '#/components/schemas/Book'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Person'
+                $ref: '#/components/schemas/Book'
         '404':
-          description: Person not found
+          description: Book not found
     delete:
-      summary: Delete a person by ID
+      summary: Delete a Book by ID
       responses:
         '204':
           description: No Content
         '404':
-          description: Person not found
+          description: Book not found
 components:
   schemas:
-    Person:
+    Book:
       type: object
       properties:
-        id:
+        book_id:
           type: integer
           readOnly: true
-        firstName:
+        title:
           type: string
-        lastName:
+        author:
+          type: string
+        genre:
+          type: string
+        publication_year:
+          type: integer
+        isbn:
           type: string

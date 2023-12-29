@@ -27,12 +27,18 @@ export default class Database {
 
   async disconnect() {
     try {
-      this.poolconnection.close();
-      console.log('Database connection closed');
+      if (this.connected) {
+        await this.poolconnection.close();
+        this.connected = false;
+        console.log('Database connection closed');
+      } else {
+        console.log('Database not connected');
+      }
     } catch (error) {
       console.error(`Error closing database connection: ${error}`);
     }
   }
+  
 
   async executeQuery(query) {
     await this.connect();
@@ -61,7 +67,6 @@ export default class Database {
     await this.connect();
     const request = this.poolconnection.request();
     const result = await request.query(`SELECT * FROM Books`);
-
     return result.recordsets[0];
   }
 
