@@ -2,25 +2,22 @@ import express from 'express';
 import { config } from './config.js';
 import Database from './database.js';
 
-import books from './books.js';
+// Import App routes
+import person from './person.js';
 import openapi from './openapi.js';
 
-const port = process.env.PORT || 3000;
+const port = 1433 || 3000;
 
 const app = express();
 
 // Development only - don't do in production
 // Run this to create the table in the database
 if (process.env.NODE_ENV === 'development') {
+  console.log(process.env.NODE_ENV,'de')
   const database = new Database(config);
   database
     .executeQuery(
-      `CREATE TABLE Books (book_id INT PRIMARY KEY,
-        title VARCHAR(255),
-        author VARCHAR(255),
-        genre VARCHAR(50),
-        publication_year INT,
-        isbn VARCHAR(20));`
+      `CREATE TABLE Person (id int NOT NULL IDENTITY, firstName varchar(255), lastName varchar(255));`
     )
     .then(() => {
       console.log('Table created');
@@ -33,7 +30,7 @@ if (process.env.NODE_ENV === 'development') {
 
 // Connect App routes
 app.use('/api-docs', openapi);
-app.use('/books', books);
+app.use('/persons', person);
 app.use('*', (_, res) => {
   res.redirect('/api-docs');
 });
@@ -42,9 +39,3 @@ app.use('*', (_, res) => {
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
 });
-
-
-
-
-
-

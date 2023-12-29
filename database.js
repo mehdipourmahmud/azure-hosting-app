@@ -27,18 +27,12 @@ export default class Database {
 
   async disconnect() {
     try {
-      if (this.connected) {
-        await this.poolconnection.close();
-        this.connected = false;
-        console.log('Database connection closed');
-      } else {
-        console.log('Database not connected');
-      }
+      this.poolconnection.close();
+      console.log('Database connection closed');
     } catch (error) {
       console.error(`Error closing database connection: ${error}`);
     }
   }
-  
 
   async executeQuery(query) {
     await this.connect();
@@ -48,57 +42,56 @@ export default class Database {
     return result.rowsAffected[0];
   }
 
-  async createBook(data) {
+  async create(data) {
     await this.connect();
     const request = this.poolconnection.request();
 
-    request.input('title', sql.NVarChar(255), data.title);
-    request.input('author', sql.NVarChar(255), data.author);
-    request.input('content', sql.NVarChar(sql.MAX), data.content);
+    request.input('firstName', sql.NVarChar(255), data.firstName);
+    request.input('lastName', sql.NVarChar(255), data.lastName);
 
     const result = await request.query(
-      `INSERT INTO Books (Title, Author, Content) VALUES (@title, @author, @content)`
+      `INSERT INTO Person (firstName, lastName) VALUES (@firstName, @lastName)`
     );
 
     return result.rowsAffected[0];
   }
 
-  async readAllBooks() {
+  async readAll() {
     await this.connect();
     const request = this.poolconnection.request();
-    const result = await request.query(`SELECT * FROM Books`);
+    const result = await request.query(`SELECT * FROM Person`);
+
     return result.recordsets[0];
   }
 
-  async readBook(id) {
+  async read(id) {
     await this.connect();
 
     const request = this.poolconnection.request();
     const result = await request
       .input('id', sql.Int, +id)
-      .query(`SELECT * FROM Books WHERE BookID = @id`);
+      .query(`SELECT * FROM Person WHERE id = @id`);
 
     return result.recordset[0];
   }
 
-  async updateBook(id, data) {
+  async update(id, data) {
     await this.connect();
 
     const request = this.poolconnection.request();
 
     request.input('id', sql.Int, +id);
-    request.input('title', sql.NVarChar(255), data.title);
-    request.input('author', sql.NVarChar(255), data.author);
-    request.input('content', sql.NVarChar(sql.MAX), data.content);
+    request.input('firstName', sql.NVarChar(255), data.firstName);
+    request.input('lastName', sql.NVarChar(255), data.lastName);
 
     const result = await request.query(
-      `UPDATE Books SET Title=@title, Author=@author, Content=@content WHERE BookID = @id`
+      `UPDATE Person SET firstName=@firstName, lastName=@lastName WHERE id = @id`
     );
 
     return result.rowsAffected[0];
   }
 
-  async deleteBook(id) {
+  async delete(id) {
     await this.connect();
 
     const idAsNumber = Number(id);
@@ -106,7 +99,7 @@ export default class Database {
     const request = this.poolconnection.request();
     const result = await request
       .input('id', sql.Int, idAsNumber)
-      .query(`DELETE FROM Books WHERE BookID = @id`);
+      .query(`DELETE FROM Person WHERE id = @id`);
 
     return result.rowsAffected[0];
   }
